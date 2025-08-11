@@ -74,8 +74,8 @@ class SistemaEventosTest {
     // TC007
     @Test
     void testNotificarObservadores() {
-        Usuario u1 = new Usuario("Carlos");
-        Administrador a1 = new Administrador("Laura");
+        Usuario u1 = new Usuario("Miguel");
+        Administrador a1 = new Administrador("Joey");
         notificador.agregarObservador(u1);
         notificador.agregarObservador(a1);
         // Aquí no tenemos un "estado" que se actualice, así que validamos que no lance errores
@@ -85,7 +85,7 @@ class SistemaEventosTest {
     // TC008
     @Test
     void testActualizarObservador() {
-        Usuario usuario = new Usuario("Ana");
+        Usuario usuario = new Usuario("Juan");
         assertDoesNotThrow(() -> usuario.actualizar("Evento cancelado"));
     }
 
@@ -145,3 +145,4 @@ class SistemaEventosTest {
         }
     }
 }
+
