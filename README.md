@@ -3,8 +3,6 @@
 
 **Integrantes:**
 
-José Iván Salazar Macias
-
 Christian David Olmedo Borbor
 
 Miguel Angel Medina Luna
