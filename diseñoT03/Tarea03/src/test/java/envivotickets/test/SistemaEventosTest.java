@@ -78,7 +78,9 @@ class SistemaEventosTest {
         Administrador a1 = new Administrador("Joey");
         notificador.agregarObservador(u1);
         notificador.agregarObservador(a1);
-        // Aquí no tenemos un "estado" que se actualice, así que validamos que no lance errores
+
+        // Solo revisamos que al notificar no falle,
+        // no que los observadores cambien algo.
         assertDoesNotThrow(() -> notificador.notificarObservadores("Cambio de horario"));
     }
 
@@ -86,6 +88,9 @@ class SistemaEventosTest {
     @Test
     void testActualizarObservador() {
         Usuario usuario = new Usuario("Juan");
+
+        // Comprobamos que el método se ejecute sin dar error,
+        // no que haga un cambio específico.
         assertDoesNotThrow(() -> usuario.actualizar("Evento cancelado"));
     }
 
@@ -133,16 +138,18 @@ class SistemaEventosTest {
         assertEquals(EstadoDisponibilidad.AGOTADO, asiento.obtenerDisponibilidad());
     }
 
-    // Método auxiliar para acceder a la lista interna de observadores usando reflexión
+    // Método auxiliar para acceder a la lista interna de observadores usando
+    // reflexión
     @SuppressWarnings("unchecked")
     private List<Observador> getObservadoresInternos() {
         try {
             var field = NotificadorEventos.class.getDeclaredField("observadores");
             field.setAccessible(true);
+
+            // Solo es para poder mirar la lista privada en las pruebas.
             return (List<Observador>) field.get(notificador);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 }
-
