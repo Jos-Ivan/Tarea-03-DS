@@ -1,0 +1,8 @@
+package envivotickets.test;
+
+public abstract class BaseObservador implements Observador {
+    @Override
+    public void actualizar(Event e) {
+        System.out.println("Notificación: " + e);
+    }
+}
