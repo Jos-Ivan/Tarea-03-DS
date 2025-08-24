@@ -1,15 +1,15 @@
 package envivotickets.test;
 public class Asiento implements ComponenteAsiento {
-    private final String numero;
-    private final double precio;
+    private final SeatNumber numero;
+    private Money precio;
     private EstadoDisponibilidad estado;
-    public Asiento(String numero, double precio, EstadoDisponibilidad estado) {
+    public Asiento(SeatNumber numero, Money precio, SeatState estado) {
         this.numero = numero;
         this.precio = precio;
         this.estado = estado;
     }
     @Override
-    public double obtenerPrecio() {
+    public Money obtenerPrecio() {
         return precio;
     }
     @Override
