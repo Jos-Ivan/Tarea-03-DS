@@ -4,8 +4,5 @@ public class Administrador implements Observador {
     public Administrador(String nombre) {
         this.nombre = nombre;
     }
-    @Override
-    public void actualizar(String mensaje) {
-        System.out.println("Administrador " + nombre + " recibió: " + mensaje);
-    }
+
 }
