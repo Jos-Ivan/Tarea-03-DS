@@ -1,0 +1,9 @@
+package envivotickets.test;
+public final class Money {
+    private final BigDecimal amount;
+    public Money(BigDecimal a){
+        if (a.signum() < 0) throw new IllegalArgumentException("Precio negativo");
+        this.amount = a;
+    }
+    public BigDecimal getAmount(){ return amount; }
+}
