@@ -6,6 +6,7 @@ public class FabricaEventosConcreta extends FabricaEventos {
             case "teatro" -> new EventoTeatro();
             case "standup" -> new EventoStandUp();
             case "microteatro" -> new EventoMicroTeatro();
+                // Si se quiere agregar una nueva Agrigar AQUI ()
             default -> throw new IllegalArgumentException("Tipo de evento no soportado: " + tipo);
         };
     }
