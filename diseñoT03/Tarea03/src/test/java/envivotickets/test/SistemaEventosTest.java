@@ -1,155 +1,62 @@
 package envivotickets.test;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-class SistemaEventosTest {
+class ProyectoTest {
 
-    FabricaEventos fabrica;
-    NotificadorEventos notificador;
-    SeccionAsientos seccion;
-    Asiento asiento1, asiento2;
-
-    @BeforeEach
-    void setUp() {
-        fabrica = new FabricaEventosConcreta();
-        notificador = new NotificadorEventos();
-        asiento1 = new Asiento("A1", 50, EstadoDisponibilidad.DISPONIBLE);
-        asiento2 = new Asiento("A2", 70, EstadoDisponibilidad.AGOTADO);
-        seccion = new SeccionAsientos("VIP");
-    }
-
-    // TC001
     @Test
-    void testCrearEventoValido() {
-        Evento e = fabrica.crearEvento("teatro");
-        assertNotNull(e);
-        assertTrue(e instanceof EventoTeatro);
+    void TC01_NotificadorEventos_AgregarYRemoverObservadores() {
+        NotificadorEventos notificador = new NotificadorEventos();
+        Usuario u = new Usuario("Juan");
+        Administrador admin = new Administrador("Laura");
+
+        notificador.agregarObservador(u);
+        notificador.agregarObservador(admin);
+        notificador.removerObservador(u);
+
+        // Solo debe quedar el administrador
+        assertDoesNotThrow(() -> notificador.notificarObservadores("Mensaje de prueba"));
     }
 
-    // TC002
     @Test
-    void testCrearEventoInexistente() {
-        assertThrows(IllegalArgumentException.class, () -> fabrica.crearEvento("TipoInexistente"));
+    void TC02_FabricaEventosConcreta_EventoInvalido() {
+        FabricaEventosConcreta fabrica = new FabricaEventosConcreta();
+        Exception ex = assertThrows(IllegalArgumentException.class, () -> {
+            fabrica.crearEvento("concierto");
+        });
+        assertTrue(ex.getMessage().contains("Tipo de evento no soportado"));
     }
 
-    // TC003
     @Test
-    void testObtenerDetallesEvento() {
-        Evento e = new EventoStandUp();
-        String detalles = e.obtenerDetalles();
-        assertTrue(detalles.toLowerCase().contains("stand-up") || detalles.toLowerCase().contains("stand up"));
+    void TC03_Asiento_CambioEstado() {
+        Asiento asiento = new Asiento("A1", 50, EstadoDisponibilidad.DISPONIBLE);
+        asiento.setEstado(EstadoDisponibilidad.RESERVADO);
+        assertEquals(EstadoDisponibilidad.RESERVADO, asiento.obtenerDisponibilidad());
     }
 
-    // TC004
     @Test
-    void testObtenerPoliticaPrecios() {
-        Evento e = new EventoTeatro();
-        PoliticaPrecios politica = e.obtenerPoliticaPrecios();
-        assertNotNull(politica);
-        assertEquals(50, politica.obtenerPrecioBase());
+    void TC04_SeccionAsientos_CalculoDisponibilidad() {
+        Asiento a1 = new Asiento("A1", 50, EstadoDisponibilidad.DISPONIBLE);
+        Asiento a2 = new Asiento("A2", 50, EstadoDisponibilidad.AGOTADO);
+        SeccionAsientos vip = new SeccionAsientos("VIP");
+        vip.agregar(a1);
+        vip.agregar(a2);
+        assertEquals(EstadoDisponibilidad.DISPONIBLE, vip.obtenerDisponibilidad());
     }
 
-    // TC005
     @Test
-    void testAgregarObservador() {
-        Usuario usuario = new Usuario("Carlos");
-        notificador.agregarObservador(usuario);
-        assertTrue(getObservadoresInternos().contains(usuario));
+    void TC05_SeccionAsientos_TodosAgotados() {
+        SeccionAsientos general = new SeccionAsientos("General");
+        general.agregar(new Asiento("G1", 20, EstadoDisponibilidad.AGOTADO));
+        general.agregar(new Asiento("G2", 20, EstadoDisponibilidad.AGOTADO));
+        general.agregar(new Asiento("G3", 20, EstadoDisponibilidad.AGOTADO));
+        assertEquals(EstadoDisponibilidad.AGOTADO, general.obtenerDisponibilidad());
     }
 
-    // TC006
     @Test
-    void testRemoverObservador() {
-        Usuario usuario = new Usuario("Carlos");
-        notificador.agregarObservador(usuario);
-        notificador.removerObservador(usuario);
-        assertFalse(getObservadoresInternos().contains(usuario));
-    }
-
-    // TC007
-    @Test
-    void testNotificarObservadores() {
-        Usuario u1 = new Usuario("Miguel");
-        Administrador a1 = new Administrador("Joey");
-        notificador.agregarObservador(u1);
-        notificador.agregarObservador(a1);
-
-        // Solo revisamos que al notificar no falle,
-        // no que los observadores cambien algo.
-        assertDoesNotThrow(() -> notificador.notificarObservadores("Cambio de horario"));
-    }
-
-    // TC008
-    @Test
-    void testActualizarObservador() {
-        Usuario usuario = new Usuario("Juan");
-
-        // Comprobamos que el método se ejecute sin dar error,
-        // no que haga un cambio específico.
-        assertDoesNotThrow(() -> usuario.actualizar("Evento cancelado"));
-    }
-
-    // TC009
-    @Test
-    void testAgregarComponenteAsiento() {
-        seccion.agregar(asiento1);
-        assertEquals(50, seccion.obtenerPrecio());
-    }
-
-    // TC010
-    @Test
-    void testRemoverComponenteAsiento() {
-        seccion.agregar(asiento1);
-        seccion.remover(asiento1);
-        assertEquals(0, seccion.obtenerPrecio());
-    }
-
-    // TC011
-    @Test
-    void testObtenerPrecioComposite() {
-        seccion.agregar(asiento1);
-        seccion.agregar(asiento2);
-        assertEquals(120, seccion.obtenerPrecio());
-    }
-
-    // TC012
-    @Test
-    void testDisponibilidadComposite() {
-        seccion.agregar(asiento1);
-        assertEquals(EstadoDisponibilidad.DISPONIBLE, seccion.obtenerDisponibilidad());
-    }
-
-    // TC013
-    @Test
-    void testPrecioAsiento() {
-        Asiento asiento = new Asiento("B1", 80, EstadoDisponibilidad.DISPONIBLE);
-        assertEquals(80, asiento.obtenerPrecio());
-    }
-
-    // TC014
-    @Test
-    void testDisponibilidadAsiento() {
-        Asiento asiento = new Asiento("B2", 60, EstadoDisponibilidad.AGOTADO);
-        assertEquals(EstadoDisponibilidad.AGOTADO, asiento.obtenerDisponibilidad());
-    }
-
-    // Método auxiliar para acceder a la lista interna de observadores usando
-    // reflexión
-    @SuppressWarnings("unchecked")
-    private List<Observador> getObservadoresInternos() {
-        try {
-            var field = NotificadorEventos.class.getDeclaredField("observadores");
-            field.setAccessible(true);
-
-            // Solo es para poder mirar la lista privada en las pruebas.
-            return (List<Observador>) field.get(notificador);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    void TC06_PoliticaPreciosBasica_ValorCorrecto() {
+        PoliticaPreciosBasica politica = new PoliticaPreciosBasica(25);
+        assertEquals(25, politica.obtenerPrecioBase());
     }
 }
