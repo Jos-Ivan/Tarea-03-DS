@@ -14,7 +14,7 @@ public class Asiento implements ComponenteAsiento {
     }
     @Override
     public EstadoDisponibilidad obtenerDisponibilidad() {
-        return estado;
+        return estado;// Mover Método
     }
     public void setEstado(EstadoDisponibilidad estado) {
         this.estado = estado;
